@@ -357,10 +357,9 @@ async function runTest() {
     await clickItem(driver, '//*[@text="삭제"]');
 
     await driver.pause(10000);
+    
     // 뷰 아웃
-    await driver.touchAction([
-      { action: 'tap', x: 200, y: 100 }
-    ]);
+    await driver.pressKeyCode(4);
 
     // +메뉴 다음으로 이동
     await clickItem(driver, '//android.widget.ImageView[@content-desc="다음"]');
