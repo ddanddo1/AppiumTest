@@ -64,7 +64,7 @@ async function runTest() {
       // 전송 버튼 클릭하기
       await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');
     }
-
+    //깃 업데이트 
     // 메시지 롱프레스 동작하기 or 모든 대화방에서 메시지 삭제
     for (let i = 1; i <= 2; i++) {
       await touchAction(driver, `//android.widget.TextView[@resource-id="com.kakao.talk:id/message" and @text="마이그레이션 테스트 텍스트 ${i}회 전송"]`, 'longPress');
