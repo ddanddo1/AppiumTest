@@ -239,7 +239,7 @@ async function runTest() {
       ]);
 
       try {
-        // 허용이라는 텍스트가 있으면 클릭 후 사진촬영 시작
+        // 확인이라는 텍스트가 있으면 클릭 후 사진촬영 시작
         await clickElement(driver, '//*[@text="확인"]');
       } catch (error) { }
 
@@ -272,19 +272,13 @@ async function runTest() {
     // 카메라 항목 선택
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');
 
-    const PermissionPopup = await driver.$('//*[@text="허용"]');
-    if (PermissionPopup) {
-      try {
-        // 허용이라는 텍스트가 있으면 클릭 후 사진촬영 시작
-        await PermissionPopup.click();
-        await clickElement(driver, '//*[@text="사진 촬영"]');
-      } catch (error) {
-        // 허용 텍스트 값이 없으면 사진촬영
-        await clickElement(driver, '//*[@text="사진 촬영"]');
-      }
-    } else {
-      await clickElement(driver, '//*[@text="사진 촬영"]');
-    }
+    try {
+      // 허용이라는 텍스트가 있으면 클릭 후 사진촬영 시작
+      await clickElement(driver, '//*[@text="허용"]');
+    } catch (error) { }
+    
+    // 사진 촬영 선택
+    await clickElement(driver, '//*[@text="사진 촬영"]');
 
     // 사진 촬영 시작
     await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="셔터"]')
@@ -332,20 +326,13 @@ async function runTest() {
     await clickElement(driver, '//*[@text="보이스톡"]');
 
     // 보이스톡 권한 팝업 발생 시 허용 선택 후 다음 스탭 실행 발생하지 않을 시에는 다음 스탭 자동 실행
-    const PermissionPopup2 = await driver.$('//*[@text="허용"]');
-    if (PermissionPopup2) {
-      try {
-        await PermissionPopup2.click();
-        await driver.pause(10000);
-      } catch (error) {
-        await driver.pause(10000);
-      }
-    } else {
-      await driver.pause(10000);
-    }
+    try {
+      // 허용이라는 텍스트가 있으면 클릭
+      await clickElement(driver, '//*[@text="허용"]');
+    } catch (error) { }
 
     // 10초 대기
-    // await driver.pause(10000);
+    await driver.pause(10000);
 
     // 보이스톡 종료
     await clickElement(driver, '//android.widget.Button[@content-desc="통화 종료"]');
@@ -360,20 +347,13 @@ async function runTest() {
     await clickElement(driver, '//*[@text="페이스톡"]');
 
     // 페이스톡 첫 진입 시 발생하는 팝업
-    const FaceTalk = await driver.$('//*[@text="다시보지않음"]');
-    if (FaceTalk) {
-      try {
-        await FaceTalk.click();
-        await driver.pause(10000);
-      } catch (error) {
-        await driver.pause(10000);
+    try {
+      // 허용이라는 텍스트가 있으면 클릭
+      await clickElement(driver, '//*[@text="다시보지않음"]');
+    } catch (error) { }
 
-      }
-    } else {
-      await driver.pause(10000);
-    }
     // 10초 대기
-    // await driver.pause(10000);
+    await driver.pause(10000);
 
     // 페이스톡 종료
     await clickElement(driver, '//android.widget.Button[@content-desc="통화 종료"]');
@@ -432,21 +412,13 @@ async function runTest() {
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[8]');
 
     // 권한 팝업이 뜰경우 허용을 선택 권한 팝업이 발생하지 않을 시 지도 선택으로 다음 스탭 시작
-    const PermissionPopup3 = await driver.$('//*[@text="허용"]');
-    if (PermissionPopup3) {
-      try {
-        await PermissionPopup3.click();
-        await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/box_wrap"]');
-      } catch (error) {
-        await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/box_wrap"]');
-
-      }
-    } else {
-      await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/box_wrap"]');
-    }
+    try {
+      // 허용이라는 텍스트가 있으면 클릭
+      await clickElement(driver, '//*[@text="허용"]');
+    } catch (error) { }
 
     // 지도 전송하기
-    // await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/box_wrap"]');
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/box_wrap"]');
 
     // +메뉴 다음으로 이동
     await clickElement(driver, '//android.widget.ImageView[@content-desc="다음"]');
@@ -490,21 +462,13 @@ async function runTest() {
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');
 
     // 음성메시지 선택 후 권한 팝업 노출되면 허용 선택 후 시작 노출되지 않을 경우 다음 스탭 시작
-    const PermissionPopup4 = await driver.$('//*[@text="허용"]');
-    if (PermissionPopup4) {
-      try {
-        await PermissionPopup4.click();
-        await clickElement(driver, '//android.widget.CheckBox[@resource-id="com.kakao.talk:id/check_box"]');
-      } catch (error) {
-        await clickElement(driver, '//android.widget.CheckBox[@resource-id="com.kakao.talk:id/check_box"]');
-
-      }
-    } else {
-      await clickElement(driver, '//android.widget.CheckBox[@resource-id="com.kakao.talk:id/check_box"]');
-    }
+     try {
+      // 허용이라는 텍스트가 있으면 클릭
+      await clickElement(driver, '//*[@text="허용"]');
+    } catch (error) { }
 
     // 간편 녹음 버튼 사용 선택
-    // await clickElement(driver, '//android.widget.CheckBox[@resource-id="com.kakao.talk:id/check_box"]');
+    await clickElement(driver, '//android.widget.CheckBox[@resource-id="com.kakao.talk:id/check_box"]');
 
     // 음성메시지 녹음 시작
     await clickElement(driver, '//android.widget.ImageButton[@content-desc="녹음 시작"]');
@@ -587,11 +551,20 @@ async function runTest() {
     // 파일 선택하기
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');
 
+    // 5초 대기
+    await driver.pause(5000);
+
     // 최근 보낸 파일 항목 전송
     await clickElement(driver, '//androidx.compose.ui.platform.ComposeView/android.view.View/android.view.View[4]/android.view.View[1]/android.widget.Button');
 
+    // 5초 대기
+    await driver.pause(5000);
+
     // 최근에 보낸 파일 전체 삭제
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');
+
+    //10초 대기 -> 파일 데이터양이 많을 때 딜레이가 있는걸 확인하여 개선
+    await driver.pause(5000);
     await clickElement(driver, '//*[@text="전체삭제"]');
     await clickElement(driver, '//*[@text="삭제"]');
 
@@ -903,7 +876,7 @@ async function runTest() {
     // 통화하기 선택
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');
 
-    // 페이스톡 선책
+    // 페이스톡 선택
     await clickElement(driver, '//*[@text="페이스톡"]');
 
     // 10초 대기
@@ -1393,24 +1366,18 @@ async function runTest() {
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');
 
     // 오픈채팅방 앨범 진입 시 불법촬영물 등 식별 및 게재 제한 팝업 확인
-    const PermissionPopup5 = await driver.$('//*[@text="확인"]');
-    if (PermissionPopup5) {
-      try {
-        await PermissionPopup5.click();
-        await driver.pause(10000);
-      } catch (error) {
-        await driver.pause(10000);
-      }
-    } else {
-      await driver.pause(10000);
-    }
+
+     // 권한 팝업이 뜰경우 허용을 선택 권한 팝업이 발생하지 않을 시 지도 선택으로 다음 스탭 시작
+     try {
+      // 확인이라는 텍스트가 있으면 클릭
+      await clickElement(driver, '//*[@text="확인"]');
+    } catch (error) { }
+
+    //10초 대기
+    await driver.pause(10000);
 
     // 지정한곳 탭
     try {
-      // 탭할 영역의 좌표 설정
-      const tapX = 88;
-      const tapY = 2006;
-
       // 특정 좌표 탭 (Tap)
       await driver.touchAction([
         { action: 'tap', x: tapX, y: tapY },
@@ -1447,27 +1414,20 @@ async function runTest() {
       // 5초 대기 
       await driver.pause(5000);
 
-      // 탭할 영역의 좌표 설정
-      const tapX2 = 88;
-      const tapY2 = 2006;
-
       // 지정한곳 탭
       await driver.touchAction([
-        { action: 'tap', x: tapX2, y: tapY2 },
+        { action: 'tap', x: tapX, y: tapY },
       ]);
 
-      const media = await driver.$('//*[@text="확인"]');
-      if (media) {
-        try {
-          // 확인이라는 텍스트가 선택
-          await media.click();
-          await clickElement(driver, '//*[@text="사진 묶어보내기"]');
-        } catch (error) {
-          await clickElement(driver, '//*[@text="사진 묶어보내기"]');
-        }
-      } else {
-        await clickElement(driver, '//*[@text="사진 묶어보내기"]');
-      }
+      
+      try {
+        // 확인 이라는 텍스트가 있으면 클릭
+        await clickElement(driver, '//*[@text="확인"]');
+      } catch (error) { }
+
+      // 사진 묶어서 보내시 선택
+      await clickElement(driver, '//*[@text="사진 묶어보내기"]');
+
 
       // 롱프레스할 요소의 XPath
       const elementXPath2 = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';
@@ -1540,36 +1500,26 @@ async function runTest() {
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');
 
     // 클린한 서비스 이용을 위한 음성 수집 동의 팝업 동의 선택 후 20초 대기
-    const VoiceRoompermission = await driver.$('//*[@text="동의"]');
-    if (VoiceRoompermission) {
-      try {
-        await VoiceRoompermission.click();
-        await driver.pause(20000);
-      } catch (error) {
-        await driver.pause(20000);
+    try {
+      // 동의라는 텍스트가 있으면 클릭
+      await clickElement(driver, '//*[@text="동의"]');
+    } catch (error) { }
 
-      }
-    } else {
-      await driver.pause(20000);
-    }
+    // 20초 대기
+    await driver.pause(20000);
 
     // 만들기 선택 후 생성
     await clickElement(driver, '//*[@text="만들기"]');
 
 
     // 데이터 알림 팝업 발생 다시보지않음 선택 후 20초 대기
-    const VoiceRoom = await driver.$('//*[@text="다시보지않음"]');
-    if (VoiceRoom) {
-      try {
-        await VoiceRoom.click();
-        await driver.pause(20000);
-      } catch (error) {
-        await driver.pause(20000);
-
-      }
-    } else {
-      await driver.pause(20000);
-    }
+    try {
+      // 동의라는 텍스트가 있으면 클릭
+      await clickElement(driver, '//*[@text="다시보지않음"]');
+    } catch (error) { }
+    
+    // 20초대기
+    await driver.pause(20000);
 
     // 보이스룸 나가기 및 종료
     await clickElement(driver, '//android.widget.ImageButton[@content-desc="보이스룸 나가기"]');
