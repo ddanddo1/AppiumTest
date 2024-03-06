@@ -37,6 +37,42 @@ async function tapElement(driver, accessibilityId) {
   await element.click();
 }
 
+function getErrorLineNumber(e) {
+  if (!(e instanceof Error)) {
+      e = new Error(e);
+  }
+
+  const lineRegex = /runTest .+?:(\d+):/;
+  const match = lineRegex.exec(e.stack);
+
+  if (match) {
+      const lineNumber = match[1];
+      return lineNumber;
+  } else {
+      return 0;
+  }
+}
+
+function sendSlackMessage(massage){
+  var myHeaders = new Headers();
+  myHeaders.append("Content-type", "application/json; charset=utf-8");
+  myHeaders.append("Authorization", "Bearer xoxb-6749966071905-6732968189718-5buYiY2kyexG5oumBcNY5Tz3");
+  
+  var raw = `{\n  \"channel\": \"C06MPJ95A2E\",\n  \"text\": \"${massage}\"\n}`;
+  
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+  
+  fetch("https://slack.com/api/chat.postMessage", requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
 async function runTest() {
   const driver = await remote(wdOpts);
 
@@ -2070,9 +2106,15 @@ async function runTest() {
     await driver.pause(3000);
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');
     await driver.pause(3000);
+    console.log('성공적으로 종료')
 
-
-  } finally {
+    sendSlackMessage('테스트 성공');
+  }
+  catch (e) {
+    console.log(e);
+    sendSlackMessage(`error: ${getErrorLineNumber(e)} Line, ${e.message}`);
+  }
+  finally {
     await driver.pause(3000);
     await driver.deleteSession();
   }
