@@ -4,6 +4,8 @@ const capabilities = {
   platformName: 'Android',
   'appium:automationName': 'UiAutomator2',
   'appium:deviceName': 'Android',
+  'appium:appPackage': 'com.kakao.talk',
+  'appium:appActivity': '.activity.main.MainActivity',
   'appium:noReset': 'true',
   'appium:autoGrantPermissions': 'true', //Android에서 권한을 자동으로 허용
 };
@@ -51,14 +53,14 @@ function getErrorLineNumber(e) {
   }
 }
 
-function sendSlackMessage(message){
-  const myHeaders = new Headers();
+function sendSlackMessage(massage){
+  var myHeaders = new Headers();
   myHeaders.append("Content-type", "application/json; charset=utf-8");
-  myHeaders.append("Authorization", "Bearer xoxb-6737288415267-6737381495430-VbudiILwACEwwN9JOVSiggTR");
-
-  const raw = JSON.stringify({ "channel": "C06MP8Q4ZNX", "text": message });
+  myHeaders.append("Authorization", "Bearer xoxb-6749966071905-6732968189718-5buYiY2kyexG5oumBcNY5Tz3");
   
-  const requestOptions = {
+  var raw = `{\n  \"channel\": \"C06MPJ95A2E\",\n  \"text\": \"${massage}\"\n}`;
+  
+  var requestOptions = {
     method: 'POST',
     headers: myHeaders,
     body: raw,
@@ -104,9 +106,6 @@ async function runTest() {
       await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');
     }
 
-    //5초 대기
-    await driver.pause(5000);
-
     // 메시지 롱프레스 동작하기 or 모든 대화방에서 메시지 삭제
     for (let i = 1; i <= 2; i++) {
       await touchAction(driver, `//android.widget.TextView[@resource-id="com.kakao.talk:id/message" and @text="마이그레이션 테스트 텍스트 ${i}회 전송"]`, 'longPress');
@@ -125,6 +124,7 @@ async function runTest() {
         await clickElement(driver, '//*[@text="삭제"]');
       }
     }
+
     // 링크 전송하기
     await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `naver.com`);
 
@@ -156,6 +156,12 @@ async function runTest() {
 
     // 이모티콘 탭 선택
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/emoticon_button"]');
+    try {
+        await clickElement(driver, '//*[@text="확인"]');
+      } catch { }
+
+    // 임티플 유저를 위해 2번째 이모티콘 탭으로 이동
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_image"])[1]');
 
     try {
       await clickElement(driver, '//*[@text="다운로드"]');
@@ -233,8 +239,8 @@ async function runTest() {
     // x : 88 y : 2006
 
     // 탭할 영역의 좌표 설정
-    const tapX = 88;
-    const tapY = 2006;
+    const tapX = 129;
+    const tapY = 2781;
 
     // 전체 값을 선택하여 앨범 진입 후 특정좌표 탭 후 스와이프로 사진전송
     try {
@@ -252,13 +258,13 @@ async function runTest() {
       // 롱프레스 (Long Press) 및 아래로 스와이프 (Swipe)
       await driver.touchAction([
         { action: 'press', element: await driver.$(elementXPath) },
-        { action: 'moveTo', x: 534, y: 1896 },  // 스와이프 거리 및 방향 조절
+        { action: 'moveTo', x: 534, y: 2090 },  // 스와이프 거리 및 방향 조절
         { action: 'release' },
       ]);
 
       await clickElement(driver, '//*[@text="전송"]');
 
-      // 20초 대기
+      // 20초대기
       await driver.pause(20000);
     } catch (error) {
       console.error('Error:', error);
@@ -284,7 +290,7 @@ async function runTest() {
         await clickElement(driver, '//*[@text="확인"]');
       } catch (error) { }
 
-      // 3초 대기
+      // 사진 묶어서 보내기 선택
       await clickElement(driver, '//*[@text="사진 묶어보내기"]');
 
       // 롱프레스할 요소의 XPath
@@ -296,14 +302,14 @@ async function runTest() {
       // 롱프레스 (Long Press) 및 아래로 스와이프 (Swipe)
       await driver.touchAction([
         { action: 'press', element: await driver.$(elementXPath2) },
-        { action: 'moveTo', x: 534, y: 1896 },  // 스와이프 거리 및 방향 조절
+        { action: 'moveTo', x: 534, y: 2090 },  // 스와이프 거리 및 방향 조절
         { action: 'release' },
       ]);
 
       // 전송 선택
       await clickElement(driver, '//*[@text="전송"]');
 
-      // 20초 대기
+      // 20초대기
       await driver.pause(20000);
     } catch (error) { }
 
@@ -321,8 +327,11 @@ async function runTest() {
     // 사진 촬영 선택
     await clickElement(driver, '//*[@text="사진 촬영"]');
 
+    // 3초 대기
+    await driver.pause(3000);
+
     // 사진 촬영 시작
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="셔터"]')
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.lge.camera:id/shutter_zoom_cue_for_large"]');
 
     // 사진촬영 후 5초 대기
     await driver.pause(5000);
@@ -331,7 +340,7 @@ async function runTest() {
     await clickElement(driver, '//*[@text="확인"]');
     await clickElement(driver, '//*[@text="전송"]');
 
-    // 동영상 전송 후 5초 대기
+    // 사진 전송 후 5초 대기
     await driver.pause(5000);
 
     //+메뉴 선택하기
@@ -343,12 +352,15 @@ async function runTest() {
     // 동영상 촬영으로 이동
     await clickElement(driver, '//*[@text="동영상 촬영"]');
 
+    // 3초 대기
+    await driver.pause(3000);
+
     // 동영상 촬영 시작 및 종료
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화"]');
+    await clickElement(driver, '//android.widget.ImageButton[@resource-id="com.lge.camera:id/shutter_large_comp_type"]');
 
     // 10초 대기
     await driver.pause(10000);
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="중지"]');
+    await clickElement(driver, '//android.widget.ImageButton[@resource-id="com.lge.camera:id/shutter_top_comp_type"]');
 
     // 동영상 확인 후 전송
     await clickElement(driver, '//*[@text="확인"]');
@@ -369,6 +381,7 @@ async function runTest() {
     // 보이스톡 권한 팝업 발생 시 허용 선택 후 다음 스탭 실행 발생하지 않을 시에는 다음 스탭 자동 실행
     try {
       // 허용이라는 텍스트가 있으면 클릭
+      await clickElement(driver, '//*[@text="허용"]');
       await clickElement(driver, '//*[@text="허용"]');
     } catch (error) { }
 
@@ -546,7 +559,7 @@ async function runTest() {
     // 연락처 단일 전송
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[3]');
     await clickElement(driver, '//*[@text="연락처 보내기"]');
-    await clickElement(driver, '//*[@text="ㄱ.마그 자동화 연락처"]');
+    await clickElement(driver, '//*[@text=".마그 자동화 연락처"]');
     await clickElement(driver, '//*[@text="전송"]');
 
     //+메뉴 선택하기
@@ -574,7 +587,7 @@ async function runTest() {
       // 롱프레스 (Long Press) 및 아래로 스와이프 (Swipe)
       await driver.touchAction([
         { action: 'press', element: await driver.$(elementXPath) },
-        { action: 'moveTo', x: 534, y: 1896 },  // 스와이프 거리 및 방향 조절
+        { action: 'moveTo', x: 534, y: 2090 },  // 스와이프 거리 및 방향 조절
         { action: 'release' },
       ]);
 
@@ -621,14 +634,14 @@ async function runTest() {
 
     //뮤직 선택하기
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[5]');
-    await driver.pause(10000);
-    await setValue(driver, '//android.widget.EditText[@resource-id="search__word"]', "Hype boy");
-    /* const textField13 = await driver.$('//android.widget.EditText[@resource-id="search__word"]');
+    await driver.pause(5000);
+    await setValue(driver, '//android.widget.EditText', "Hype boy");
+    /* const textField13 = await driver.$('//android.widget.EditText');
     await textField13.setValue("Hype boy") ; */
     await clickElement(driver, '//android.widget.Button[@text="찾기"]');
 
     // 뮤직 단일 전송 
-    await clickElement(driver, '//android.widget.ListView[@resource-id="commonList"]/android.view.View[1]/android.view.View[2]/android.view.View[1]');
+    await clickElement(driver, '//android.webkit.WebView[@text="Melon"]/android.view.View[2]/android.view.View[2]/android.view.View/android.widget.ListView/android.view.View[1]');
     await clickElement(driver, '//android.widget.TextView[@text="보내기1"]');
 
     // 5초 대기 
@@ -637,14 +650,15 @@ async function runTest() {
     // #버튼 제비뽑기 전송
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');
     await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="제비뽑기"]');
+    await driver.pause(3000);
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');
 
-    // #버튼 제비뽑기 전송
+    // #버튼 날씨 전송
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');
     await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="날씨"]');
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');
 
-    // #버튼 제비뽑기 전송
+    // #버튼 디데이 전송
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]')
     await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="D-DAY"]');
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');
@@ -663,6 +677,9 @@ async function runTest() {
 
     // 톡 게시판 선택 
     await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/title_text" and @text="톡게시판"]');
+
+    // 3초 대기
+    await driver.pause(3000);
 
     // 글쓰기 버튼 선택
     await clickElement(driver, '//android.widget.Button[@content-desc="글쓰기"]');
@@ -700,6 +717,7 @@ async function runTest() {
     try {
       // "다시 보지 않음" 텍스트가 있으면 클릭
       await clickElement(driver, '//*[@text="다시보지않음"]');
+      await driver.pause(5000);
     } catch (error) { }
 
     try {
@@ -709,7 +727,7 @@ async function runTest() {
       // 롱프레스 (Long Press) 및 아래로 스와이프 (Swipe)
       await driver.touchAction([
         { action: 'press', element: await driver.$(elementXPath) },
-        { action: 'moveTo', x: 545, y: 1888 },  // 스와이프 거리 및 방향 조절
+        { action: 'moveTo', x: 545, y: 2090 },  // 스와이프 거리 및 방향 조절
         { action: 'release' },
       ]);
 
@@ -741,9 +759,27 @@ async function runTest() {
 
     // 동영상 선택
     await clickElement(driver, '//android.widget.ImageView[@content-desc="동영상"]');
+    
+    // 5초 대기
+    await driver.pause(5000);
 
-    // 첫번째 동영상 선택
-    await clickElement(driver, '//android.view.View[@resource-id="com.sec.android.gallery3d:id/gl_root_view"]/com.sec.samsung.gallery.glview.composeView.ThumbObject[1]');
+    try {
+      const tapX1 = 228;
+      const tapY1 = 411; 
+      // 지정한곳 탭
+      await driver.touchAction([
+        { action: 'tap', x: tapX1, y: tapY1 },
+      ]);
+
+      await driver.pause(5000);
+
+       // 지정한곳 탭
+       await driver.touchAction([
+        { action: 'tap', x: tapX1, y: tapY1 },
+      ]);
+    } catch{} 
+
+    await driver.pause(5000);
 
     // 확인 선택
     await clickElement(driver, '//android.widget.Button[@text="확인"]');
@@ -813,6 +849,9 @@ async function runTest() {
 
     // 백키로 채팅목록으로 이동
     await driver.pressKeyCode(4);
+
+    // 5초 대기
+    await driver.pause(5000);
 
     // + 아이콘을 찾아서 클릭 (XPath 값으로 수정)
     await clickElement(driver, '//android.widget.Button[@content-desc="대화 시작하기"]');
@@ -984,7 +1023,7 @@ async function runTest() {
       // 롱프레스 (Long Press) 및 아래로 스와이프 (Swipe)
       await driver.touchAction([
         { action: 'press', element: await driver.$(elementXPath2) },
-        { action: 'moveTo', x: 534, y: 1896 },  // 스와이프 거리 및 방향 조절
+        { action: 'moveTo', x: 534, y: 2090 },  // 스와이프 거리 및 방향 조절
         { action: 'release' },
       ]);
 
@@ -1004,8 +1043,11 @@ async function runTest() {
     // 사진촬영으로 이동
     await clickElement(driver, '//*[@text="사진 촬영"]');
 
+    // 3초 대기
+    await driver.pause(3000);
+
     // 사진 촬영 시작
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="셔터"]')
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.lge.camera:id/shutter_zoom_cue_for_large"]');
 
     // 3초 대기 후 전송
     await driver.pause(3000);
@@ -1026,12 +1068,15 @@ async function runTest() {
     // 동영상 촬영으로 이동
     await clickElement(driver, '//*[@text="동영상 촬영"]');
 
+    // 3초 대기
+    await driver.pause(3000);
+
     // 동영상 촬영 시작 및 종료
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화"]');
+    await clickElement(driver, '//android.widget.ImageButton[@resource-id="com.lge.camera:id/shutter_large_comp_type"]');
 
     // 10초 대기
     await driver.pause(10000);
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="중지"]');
+    await clickElement(driver, '//android.widget.ImageButton[@resource-id="com.lge.camera:id/shutter_top_comp_type"]');
 
     // 동영상 확인 후 전송
     await clickElement(driver, '//*[@text="확인"]');
@@ -1078,6 +1123,7 @@ async function runTest() {
 
     // 예약메시지 텍스트 필드 선택 후 텍스트 입력 후 예약
     await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk.jordy:id/text_content"]', "마이그레이션 테스트 예약메시지");
+    await driver.pause(3000);
     await clickElement(driver, '//*[@text="예약"]');
 
     //+메뉴 선택하기
@@ -1091,6 +1137,9 @@ async function runTest() {
 
     // 일정 제목 텍스트 필드 선택 후 텍스트 입력
     await setValue(driver, '//android.widget.EditText[@resource-id="com.kakao.talk.calendar:id/event_title"]', "마이그레이션 일정 제목");
+
+    // 3초 대기
+    await driver.pause(3000);
 
     // 일정 저장
     await clickElement(driver, '//*[@text="저장"]');
@@ -1195,7 +1244,7 @@ async function runTest() {
     // 연락처 단일 전송
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[3]');
     await clickElement(driver, '//*[@text="연락처 보내기"]');
-    await clickElement(driver, '//*[@text="ㄱ.마그 자동화 연락처"]');
+    await clickElement(driver, '//*[@text=".마그 자동화 연락처"]');
     await clickElement(driver, '//*[@text="전송"]');
 
     //+메뉴 선택하기
@@ -1212,6 +1261,9 @@ async function runTest() {
     // 앨범에서 선택하기
     await clickElement(driver, '//*[@text="앨범에서 선택"]');
 
+    // 5초대기
+    await driver.pause(5000);
+
     // 전체 값을 선택하여 앨범 진입 후 특정좌표 탭 후 스와이프로 사진전송
     try {
       // 롱프레스할 요소의 XPath
@@ -1220,7 +1272,7 @@ async function runTest() {
       // 롱프레스 (Long Press) 및 아래로 스와이프 (Swipe)
       await driver.touchAction([
         { action: 'press', element: await driver.$(elementXPath) },
-        { action: 'moveTo', x: 534, y: 1896 },  // 스와이프 거리 및 방향 조절
+        { action: 'moveTo', x: 534, y: 2090 },  // 스와이프 거리 및 방향 조절
         { action: 'release' },
       ]);
 
@@ -1246,7 +1298,9 @@ async function runTest() {
 
     // 최근에 보낸 파일 전체 삭제
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[4]');
+    await driver.pause(2000);
     await clickElement(driver, '//*[@text="전체삭제"]');
+    await driver.pause(2000);
     await clickElement(driver, '//*[@text="삭제"]');
 
     // 5초 대기
@@ -1261,11 +1315,11 @@ async function runTest() {
     //뮤직 선택하기
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[5]');
     await driver.pause(5000);
-    await setValue(driver, '//android.widget.EditText[@resource-id="search__word"]', "Hype boy");
+    await setValue(driver, '//android.widget.EditText', "Hype boy");
     await clickElement(driver, '//android.widget.Button[@text="찾기"]');
 
     // 뮤직 단일 전송 
-    await clickElement(driver, '//android.widget.ListView[@resource-id="commonList"]/android.view.View[1]/android.view.View[2]/android.view.View[1]');
+    await clickElement(driver, '//android.webkit.WebView[@text="Melon"]/android.view.View[2]/android.view.View[2]/android.view.View/android.widget.ListView/android.view.View[1]');
     await clickElement(driver, '//android.widget.TextView[@text="보내기1"]');
 
     // 5초 대기 
@@ -1279,21 +1333,22 @@ async function runTest() {
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.vox:id/livetalk_start_button"]');
     await driver.pause(10000);
     await driver.touchAction([
-      { action: 'tap', x: 100, y: 100 }]); // 좌표는 화면에서 원하는 위치로 설정
+      { action: 'tap', x: 513, y: 724 }]); // 좌표는 화면에서 원하는 위치로 설정
     await clickElement(driver, '//*[@text="종료"]');
     await clickElement(driver, '//*[@text="확인"]');
 
     // #버튼 제비뽑기 전송
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');
     await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="제비뽑기"]');
+    await driver.pause(3000);
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');
 
-    // #버튼 제비뽑기 전송
+    // #버튼 날씨 전송
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');
     await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="날씨"]');
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');
 
-    // #버튼 제비뽑기 전송
+    // #버튼 디데이 전송
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');
     await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="D-DAY"]');
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');
@@ -1309,6 +1364,9 @@ async function runTest() {
 
     // 톡 게시판 선택 
     await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/title_text" and @text="톡게시판"]');
+
+    // 3초 대기
+    await driver.pause(3000);
 
     // 글쓰기 버튼 선택
     await clickElement(driver, '//android.widget.Button[@content-desc="글쓰기"]');
@@ -1385,11 +1443,30 @@ async function runTest() {
     // 글쓰기
     await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk.moim:id/content_edit"]', "마이그레이션 동영상 올리기 테스트");
 
-    // 동영상 선택
-    await clickElement(driver, '//android.widget.ImageView[@content-desc="동영상"]');
+   // 동영상 선택
+   await clickElement(driver, '//android.widget.ImageView[@content-desc="동영상"]');
+    
+   // 5초 대기
+   await driver.pause(5000);
 
-    // 첫번째 동영상 선택
-    await clickElement(driver, '//android.view.View[@resource-id="com.sec.android.gallery3d:id/gl_root_view"]/com.sec.samsung.gallery.glview.composeView.ThumbObject[1]');
+   try {
+     const tapX1 = 228;
+     const tapY1 = 411; 
+     // 지정한곳 탭
+     await driver.touchAction([
+       { action: 'tap', x: tapX1, y: tapY1 },
+     ]);
+
+     await driver.pause(5000);
+
+      // 지정한곳 탭
+      await driver.touchAction([
+       { action: 'tap', x: tapX1, y: tapY1 },
+     ]);
+   } catch{} 
+
+   // 5초대기
+   await driver.pause(5000);
 
     // 확인 선택
     await clickElement(driver, '//android.widget.Button[@text="확인"]');
@@ -1457,8 +1534,11 @@ async function runTest() {
     // 5초 대기
     await driver.pause(5000);
 
-    // 뷰 아웃
+    // 백키로 채팅목록으로 나가기
     await driver.pressKeyCode(4);
+
+    // 5초 대기
+    await driver.pause(5000);
 
     // + 아이콘을 찾아서 클릭 (XPath 값으로 수정)
     await clickElement(driver, '//android.widget.Button[@content-desc="대화 시작하기"]');
@@ -1586,8 +1666,8 @@ async function runTest() {
     // 앨범 선택하기
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');
 
-    // 5초 대기 
-    await driver.pause(5000);
+    // 10초 대기 
+    await driver.pause(10000);
 
     // 전체 선택
     // await clickElement(driver, '//*[@text="전체"]');
@@ -1609,7 +1689,7 @@ async function runTest() {
       // 롱프레스 (Long Press) 및 아래로 스와이프 (Swipe)
       await driver.touchAction([
         { action: 'press', element: await driver.$(elementXPath) },
-        { action: 'moveTo', x: 534, y: 1896 },  // 스와이프 거리 및 방향 조절
+        { action: 'moveTo', x: 534, y: 2090 },  // 스와이프 거리 및 방향 조절
         { action: 'release' },
       ]);
 
@@ -1630,8 +1710,11 @@ async function runTest() {
     // 1:1 채팅방에서 모든 권한을 허용해서 노출 안될것으로 생각하여 바로 촬영 시작
     await clickElement(driver, '//*[@text="사진 촬영"]');
 
+    // 3초 대기
+    await driver.pause(3000);
+
     // 사진 촬영 시작
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="셔터"]')
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.lge.camera:id/shutter_zoom_cue_for_large"]')
 
     // 사진촬영 후 5초 대기
     await driver.pause(5000);
@@ -1652,12 +1735,15 @@ async function runTest() {
     // 동영상 촬영으로 이동
     await clickElement(driver, '//*[@text="동영상 촬영"]');
 
+    // 3초 대기
+    await driver.pause(3000);
+
     // 동영상 촬영 시작 및 종료
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화"]');
+    await clickElement(driver, '//android.widget.ImageButton[@resource-id="com.lge.camera:id/shutter_large_comp_type"]');
 
     // 10초 대기
     await driver.pause(10000);
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="중지"]');
+    await clickElement(driver, '//android.widget.ImageButton[@resource-id="com.lge.camera:id/shutter_top_comp_type"]');
 
     // 동영상 확인 후 전송
     await clickElement(driver, '//*[@text="확인"]');
@@ -1669,11 +1755,14 @@ async function runTest() {
     // 뷰 아웃 백키
     await driver.pressKeyCode(4);
 
+    // 5초 대기
+    await driver.pause(5000);
+
     // 오픈 채팅탭으로 이동
     await clickElement(driver, '//*[@text="오픈채팅"]');
 
     // 첫 번째 오픈채팅방 선택
-    await clickElement(driver, '(//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/title"])[1]/android.widget.LinearLayout[1]/android.view.ViewGroup');
+    await clickElement(driver, '//android.widget.LinearLayout[@resource-id="com.kakao.talk:id/title"]/android.widget.LinearLayout[2]/android.widget.RelativeLayout');ㄴ
 
     // +메뉴 선택하기
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');
@@ -1708,7 +1797,7 @@ async function runTest() {
       // 롱프레스 (Long Press) 및 아래로 스와이프 (Swipe)
       await driver.touchAction([
         { action: 'press', element: await driver.$(elementXPath) },
-        { action: 'moveTo', x: 534, y: 1896 },  // 스와이프 거리 및 방향 조절
+        { action: 'moveTo', x: 534, y: 2090 },  // 스와이프 거리 및 방향 조절
         { action: 'release' },
       ]);
 
@@ -1754,7 +1843,7 @@ async function runTest() {
       // 롱프레스 (Long Press) 및 아래로 스와이프 (Swipe)
       await driver.touchAction([
         { action: 'press', element: await driver.$(elementXPath2) },
-        { action: 'moveTo', x: 534, y: 1896 },  // 스와이프 거리 및 방향 조절
+        { action: 'moveTo', x: 534, y: 2090 },  // 스와이프 거리 및 방향 조절
         { action: 'release' },
       ]);
 
@@ -1776,8 +1865,11 @@ async function runTest() {
     // 사진촬영으로 이동
     await clickElement(driver, '//*[@text="사진 촬영"]');
 
+    // 3초 대기
+    await driver.pause(3000);
+
     // 사진 촬영 시작
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="셔터"]')
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.lge.camera:id/shutter_zoom_cue_for_large"]')
 
     // 3초 대기 후 전송
     await driver.pause(3000);
@@ -1796,11 +1888,14 @@ async function runTest() {
     // 동영상 촬영으로 이동
     await clickElement(driver, '//*[@text="동영상 촬영"]');
 
+    // 3초 대기
+    await driver.pause(3000);
+
     // 동영상 촬영 시작 및 종료
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화"]');
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.lge.camera:id/shutter_zoom_cue_for_large"]');
     // 10초 대기
     await driver.pause(10000);
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="중지"]');
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="종료"]');
 
     // 동영상 확인 후 전송
     await clickElement(driver, '//*[@text="확인"]');
@@ -1922,7 +2017,7 @@ async function runTest() {
     // 연락처 단일 전송
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[8]');
     await clickElement(driver, '//*[@text="연락처 보내기"]');
-    await clickElement(driver, '//*[@text="ㄱ.마그 자동화 연락처"]');
+    await clickElement(driver, '//*[@text=".마그 자동화 연락처"]');
     await clickElement(driver, '//*[@text="전송"]');
 
     //+메뉴 선택하기
@@ -1934,17 +2029,22 @@ async function runTest() {
     // 파일 선택
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');
 
+    try {
+      // 확인 이라는 텍스트가 있으면 클릭
+      await clickElement(driver, '//*[@text="확인"]');
+    } catch (error) { }
+
     // 파일 전송
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.android.documentsui:id/icon_thumb"])[1]');
 
     // 뮤직 선택
     await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[2]');
     await driver.pause(5000);
-    await setValue(driver, '//android.widget.EditText[@resource-id="search__word"]', "Hype boy");
+    await setValue(driver, '//android.widget.EditText', "Hype boy");
     await clickElement(driver, '//android.widget.Button[@text="찾기"]');
 
     // 뮤직 단일 전송 
-    await clickElement(driver, '//android.widget.ListView[@resource-id="commonList"]/android.view.View[1]/android.view.View[2]/android.view.View[1]');
+    await clickElement(driver, '//android.webkit.WebView[@text="Melon"]/android.view.View[2]/android.view.View[2]/android.view.View/android.widget.ListView/android.view.View[1]');
     await clickElement(driver, '//android.widget.TextView[@text="보내기1"]');
 
     // 5초 대기 
@@ -1953,6 +2053,7 @@ async function runTest() {
     // #버튼 제비뽑기 전송
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/search_sharp_button"]');
     await clickElement(driver, '//android.widget.TextView[@resource-id="com.kakao.talk:id/keyword" and @text="제비뽑기"]');
+    await driver.pause(3000);
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk.jordy:id/share"]');
 
     // #버튼 날씨 전송
@@ -2043,11 +2144,9 @@ async function runTest() {
     await driver.pause(3000);
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');
     await driver.pause(3000);
-
-    
     console.log('성공적으로 종료')
 
-    sendSlackMessage('자동화 테스트 완료');
+    sendSlackMessage('테스트 성공');
   }
   catch (e) {
     console.log(e);
