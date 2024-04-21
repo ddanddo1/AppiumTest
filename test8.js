@@ -36,54 +36,54 @@ async function runTest() {
   const driver = await remote(wdOpts);
 
   try {
-          // 패키지명과 액티비티명을 찾아서 수정
-          await clickElement(driver, '//*[@text="카카오톡"]');
+     // +메뉴 선택하기
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');
 
-          // 3초대기
-          await driver.pause(5000);
-    
-          // 채팅 아이콘을 찾아서 클릭
-          await clickElement(driver, '//*[@text="채팅"]');
-    
-          // + 아이콘을 찾아서 클릭 (XPath 값으로 수정)
-          await clickElement(driver, '//android.widget.Button[@content-desc="대화 시작하기"]');
-    
-          // 일반 채팅 텍스트를 찾아서 클릭 (XPath 값으로 수정)
-          await clickElement(driver, '//android.widget.TextView[@text="일반채팅"]');
-    
-          // 첫 번째 유저 클릭 (XPath 값으로 수정)
-          await clickElement(driver, '(//android.widget.RelativeLayout[@resource-id="com.kakao.talk:id/deactive_background"])[1]/android.view.ViewGroup');
-    
-          // 유저 선택 후 확인 버튼 선택하기
-          await clickElement(driver, '//*[@text="확인"]');
-    
-          for (let i = 1; i <= 2; i++) {
-            // 텍스트 필드를 찾아서 n회 입력
-            await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `마이그레이션 테스트 텍스트 ${i}회 전송`);
-    
-            // 전송 버튼 클릭하기
-            await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');
-          }
-    
-          //5초 대기
-          await driver.pause(5000);
-    for (let i = 1; i <= 2; i++) {
-      await touchAction(driver, `//android.widget.TextView[@resource-id="com.kakao.talk:id/message" and @text="마이그레이션 테스트 텍스트 ${i}회 전송"]`, 'longPress');
-      await clickElement(driver, '//*[@text="삭제"]');
+    // 앨범 선택하기
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/iv_icon"])[1]');
 
-      if (i === 1) {
-        // 모든 대화방에서 메시지 삭제
-        await clickElement(driver, '//*[@text="확인"]');
-        await clickElement(driver, '//*[@text="삭제"]');
-      }
-      else {
-        // 이 기기에서 메시지 삭제
-        await clickElement(driver, '//*[@text="이 기기에서 삭제"]');
-        await clickElement(driver, '//*[@text="확인"]');
-        await clickElement(driver, '//*[@text="삭제하기"]');
-        await clickElement(driver, '//*[@text="삭제"]');
-      }
+    // 5초 대기 
+    await driver.pause(5000);
+
+    // 전체 선택
+    // await clickElement(driver, '//*[@text="전체"]');
+    // x : 88 y : 2006
+
+    // 탭할 영역의 좌표 설정
+     const tapX = 233;
+     const tapY = 2088;
+
+     
+
+    // 전체 값을 선택하여 앨범 진입 후 특정좌표 탭 후 스와이프로 사진전송
+    try {
+      // 특정 좌표 탭 (Tap)
+      await driver.touchAction([
+        { action: 'tap', x: tapX, y: tapY },
+      ]);
+
+      // 5초 대기 
+      await driver.pause(5000);
+
+      // 롱프레스할 요소의 XPath
+      const elementXPath = '(//android.widget.ImageView[@resource-id="com.kakao.talk:id/thumbnail"])[2]';
+
+      // 롱프레스 (Long Press) 및 아래로 스와이프 (Swipe)
+      await driver.touchAction([
+        { action: 'press', element: await driver.$(elementXPath) },
+        { action: 'moveTo', x: 534, y: 2090 },  // 스와이프 거리 및 방향 조절
+        { action: 'release' },
+      ]);
+
+      await clickElement(driver, '//*[@text="전송"]');
+
+      // 20초대기
+      await driver.pause(20000);
+    } catch (error) {
+      console.error('Error:', error);
     }
+
+
   }
   catch (e) {
     console.log(e);

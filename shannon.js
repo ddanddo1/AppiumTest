@@ -32,12 +32,20 @@ async function touchAction(driver, xpath, action) {
   await element.touchAction(action);
 }
 
+async function tapElement(driver, accessibilityId) {
+  const element = await driver.$(`android=new UiSelector().description("${accessibilityId}")`);
+  await element.click();
+}
+
 async function runTest() {
   const driver = await remote(wdOpts);
 
   try {
     // 패키지명과 액티비티명을 찾아서 수정
     await clickElement(driver, '//*[@text="카카오톡"]');
+
+    // 3초대기
+    await driver.pause(5000);
 
     // 채팅 아이콘을 찾아서 클릭
     await clickElement(driver, '//*[@text="채팅"]');
@@ -61,6 +69,9 @@ async function runTest() {
       // 전송 버튼 클릭하기
       await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');
     }
+
+    //5초 대기
+    await driver.pause(5000);
 
     // 메시지 롱프레스 동작하기 or 모든 대화방에서 메시지 삭제
     for (let i = 1; i <= 2; i++) {
@@ -106,26 +117,24 @@ async function runTest() {
     // 이모티콘 탭 선택
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/emoticon_button"]');
 
+    // 이모티콘 3번째 탭 진입
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_image"])[2]');
+
     try {
     // 다운로드 텍스트가 노출되면 선택 후 다음 스탭 진행
       await clickElement(driver, '//*[@text="다운로드"]');
     } catch { }
 
-    for (let i = 1; i <= 4; i++) {
-      await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[${i}]`, [
-        { action: 'tap', x: 0, y: 0 },
-        { action: 'tap', x: 0, y: 0 }
-      ]);
-    }
+    // 이모티콘 탭 선택
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[1]');
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[2]');
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');
+    await clickElement(driver, '(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[3]');
+    await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');
 
     // 텍스트 입력
     await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `이모티콘과 함께 전송`);
-
-    // 이모티콘 탭 선탭 후 더블탭으로 이모티콘 전송
-    await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[1]`, [
-      { action: 'tap', x: 0, y: 0 },
-      { action: 'tap', x: 0, y: 0 }
-    ]);
 
     // 기본 이모티콘 전송
     await setValue(driver, '//android.widget.MultiAutoCompleteTextView[@resource-id="com.kakao.talk:id/message_edit_text"]', `(하하), (하트뿅), (우와), (심각)`);
@@ -151,18 +160,18 @@ async function runTest() {
 
     // 5초 대기 
     await driver.pause(5000);
-
+    
     // 탭할 영역의 좌표 설정
-    const tapX = 88;
-    const tapY = 2006;
+    const tapX = 198;
+    const tapY = 2663;
 
     // 전체 값을 선택하여 앨범 진입 후 특정좌표 탭 후 스와이프로 사진전송
     try {
-      // 특정 좌표 탭 (Tap)
+
       await driver.touchAction([
         { action: 'tap', x: tapX, y: tapY },
       ]);
-
+  
       // 5초 대기 
       await driver.pause(5000);
 
@@ -177,6 +186,10 @@ async function runTest() {
       ]);
 
       await clickElement(driver, '//*[@text="전송"]');
+
+      try {
+        await clickElement(driver, '//*[@text="확인"]');
+      } catch{ }
 
       // 20초 대기
       await driver.pause(20000);
@@ -242,7 +255,7 @@ async function runTest() {
     await clickElement(driver, '//*[@text="사진 촬영"]');
 
     // 사진 촬영 시작
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="사진 촬영"]');
+    await clickElement(driver, '//android.widget.RelativeLayout[@resource-id="com.lge.camera:id/shutter_large_comp_layout"]/android.widget.LinearLayout');
 
     // 사진촬영 후 5초 대기
     await driver.pause(5000);
@@ -264,11 +277,11 @@ async function runTest() {
     await clickElement(driver, '//*[@text="동영상 촬영"]');
 
     // 동영상 촬영 시작 및 종료
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화 시작"]');
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="동영상 촬영"]');
 
     // 10초 대기
     await driver.pause(10000);
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화 중지"]');
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="종료"]');
 
     // 동영상 확인 후 전송
     await clickElement(driver, '//*[@text="확인"]');
@@ -938,7 +951,7 @@ async function runTest() {
     await clickElement(driver, '//*[@text="사진 촬영"]');
 
     // 사진 촬영 시작
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="사진 촬영"]');
+    await clickElement(driver, '//android.widget.RelativeLayout[@resource-id="com.lge.camera:id/shutter_large_comp_layout"]/android.widget.LinearLayout');
 
     // 3초 대기 후 전송
     await driver.pause(3000);
@@ -960,11 +973,11 @@ async function runTest() {
     await clickElement(driver, '//*[@text="동영상 촬영"]');
 
     // 동영상 촬영 시작 및 종료
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화 시작"]');
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="동영상 촬영"]');
 
     // 10초 대기
     await driver.pause(10000);
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화 중지"]');
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="종료"]');
 
     // 동영상 확인 후 전송
     await clickElement(driver, '//*[@text="확인"]');
@@ -1516,7 +1529,7 @@ async function runTest() {
     await clickElement(driver, '//*[@text="사진 촬영"]');
 
     // 사진 촬영 시작
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="사진 촬영"]')
+    await clickElement(driver, '//android.widget.RelativeLayout[@resource-id="com.lge.camera:id/shutter_large_comp_layout"]/android.widget.LinearLayout')
 
     // 사진촬영 후 5초 대기
     await driver.pause(5000);
@@ -1538,11 +1551,11 @@ async function runTest() {
     await clickElement(driver, '//*[@text="동영상 촬영"]');
 
     // 동영상 촬영 시작 및 종료
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화 시작"]');
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="동영상 촬영"]');
 
     // 10초 대기
     await driver.pause(10000);
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화 중지"]');
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="종료"]');
 
     // 동영상 확인 후 전송
     await clickElement(driver, '//*[@text="확인"]');
@@ -1663,7 +1676,7 @@ async function runTest() {
     await clickElement(driver, '//*[@text="사진 촬영"]');
 
     // 사진 촬영 시작
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="사진 촬영"]')
+    await clickElement(driver, '//android.widget.RelativeLayout[@resource-id="com.lge.camera:id/shutter_large_comp_layout"]/android.widget.LinearLayout')
 
     // 3초 대기 후 전송
     await driver.pause(3000);
@@ -1685,10 +1698,10 @@ async function runTest() {
     await clickElement(driver, '//*[@text="동영상 촬영"]');
 
     // 동영상 촬영 시작 및 종료
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화 시작"]');
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="동영상 촬영"]');
     // 10초 대기
     await driver.pause(10000);
-    await clickElement(driver, '//GLButton[@content-desc="NONE" and @text="녹화 중지"]');
+    await clickElement(driver, '//android.widget.ImageButton[@content-desc="종료"]');
 
     // 동영상 확인 후 전송
     await clickElement(driver, '//*[@text="확인"]');
@@ -1938,15 +1951,8 @@ async function runTest() {
     await driver.pause(3000);
     await clickElement(driver, '//android.widget.Button[@resource-id="com.kakao.talk:id/keypad_0"]');
     await driver.pause(3000);
-
-    console.log('성공적으로 종료')
-
-    sendSlackMessage('자동화 테스트 완료');
   }
-  catch (e) {
-    console.log(e);
-    sendSlackMessage(`error: ${getErrorLineNumber(e)} Line, ${e.message}`);
-  }
+
   finally {
     await driver.pause(3000);
     await driver.deleteSession();
