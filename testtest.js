@@ -38,36 +38,36 @@ async function runTest() {
   try {
     try {
 
-    //    // See https://webdriver.io/docs/api/browser/action/
-    // await driver
-    // // a. Create the event
-    // .action('pointer')
-    // // b. Move finger into start position
-    // .move(92, 2115) // This can also be written as .move({ x:x, y:y }) which allows you to add more options
-    // // c. Finger comes down into contact with screen
-    // .down() // This can also be written as .down({ button:0 }) which allows you to add more options
-    // // d. Perform the action, in this flow the finger will stay on the screen, this is normally not a good flow because you are "stuck"
-    // .up()
-    // .perform()
+      //    // See https://webdriver.io/docs/api/browser/action/
+      // await driver
+      // // a. Create the event
+      // .action('pointer')
+      // // b. Move finger into start position
+      // .move(92, 2115) // This can also be written as .move({ x:x, y:y }) which allows you to add more options
+      // // c. Finger comes down into contact with screen
+      // .down() // This can also be written as .down({ button:0 }) which allows you to add more options
+      // // d. Perform the action, in this flow the finger will stay on the screen, this is normally not a good flow because you are "stuck"
+      // .up()
+      // .perform()
 
 
-    for (let i = 1; i <= 2; i++) {
-      await touchAction(driver, `//android.widget.TextView[@resource-id="com.kakao.talk:id/message" and @text="마이그레이션 테스트 텍스트 ${i}회 전송"]`, 'longPress');
-      await clickElement(driver, '//*[@text="삭제"]');
-
-      if (i === 1) {
-        // 모든 대화방에서 메시지 삭제
-        await clickElement(driver, '//*[@text="확인"]');
+      for (let i = 1; i <= 2; i++) {
+        await touchAction(driver, `//android.widget.TextView[@resource-id="com.kakao.talk:id/message" and @text="마이그레이션 테스트 텍스트 ${i}회 전송"]`, 'longPress');
         await clickElement(driver, '//*[@text="삭제"]');
+
+        if (i === 1) {
+          // 모든 대화방에서 메시지 삭제
+          await clickElement(driver, '//*[@text="확인"]');
+          await clickElement(driver, '//*[@text="삭제"]');
+        }
+        else {
+          // 이 기기에서 메시지 삭제
+          await clickElement(driver, '//*[@text="이 기기에서 삭제"]');
+          await clickElement(driver, '//*[@text="확인"]');
+          await clickElement(driver, '//*[@text="삭제하기"]');
+          await clickElement(driver, '//*[@text="삭제"]');
+        }
       }
-      else {
-        // 이 기기에서 메시지 삭제
-        await clickElement(driver, '//*[@text="이 기기에서 삭제"]');
-        await clickElement(driver, '//*[@text="확인"]');
-        await clickElement(driver, '//*[@text="삭제하기"]');
-           await clickElement(driver, '//*[@text="삭제"]');
-      }
-    }
 
       // 탭할 영역의 좌표 설정
       const tapX = 92;
