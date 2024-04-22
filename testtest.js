@@ -65,7 +65,7 @@ async function runTest() {
         await clickElement(driver, '//*[@text="이 기기에서 삭제"]');
         await clickElement(driver, '//*[@text="확인"]');
         await clickElement(driver, '//*[@text="삭제하기"]');
-        await clickElement(driver, '//*[@text="삭제"]');
+           await clickElement(driver, '//*[@text="삭제"]');
       }
     }
 

@@ -1210,32 +1210,15 @@ async function runTest() {
     // 이모티콘 탭 선택
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/emoticon_button"]');
 
-    const downloadText2 = await driver.$('//*[@text="다운로드"]');
-    if (downloadText2) {
-      try {
-        await downloadText2.click();
-        for (let i = 1; i <= 4; i++) {
-          await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[${i}]`, [
-            { action: 'tap', x: 0, y: 0 },
-            { action: 'tap', x: 0, y: 0 }
-          ]);
-        }
-      } catch (error) {
-        for (let i = 1; i <= 4; i++) {
-          await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[${i}]`, [
-            { action: 'tap', x: 0, y: 0 },
-            { action: 'tap', x: 0, y: 0 }
-          ]);
-        }
+    try {
+      await clickElement(driver, '//*[@text="다운로드"]');
+    } catch { }
 
-      }
-    } else {
-      for (let i = 1; i <= 4; i++) {
-        await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[${i}]`, [
-          { action: 'tap', x: 0, y: 0 },
-          { action: 'tap', x: 0, y: 0 }
-        ]);
-      }
+    for (let i = 1; i <= 4; i++) {
+      await touchAction(driver, `(//android.widget.ImageView[@resource-id="com.kakao.talk.emoticon:id/emoticon_icon"])[${i}]`, [
+        { action: 'tap', x: 0, y: 0 },
+        { action: 'tap', x: 0, y: 0 }
+      ]);
     }
     /*
     // 이모티콘 더블탭하여 전송
@@ -1285,7 +1268,6 @@ async function runTest() {
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/send"]');
 
     /* ------------텍스트 500자 입력 후 이모티콘 진입 시 얼럿 노출 확인 여부에 대한 구현 여부가 가능한지 생각중..... */
-
 
     // +메뉴 선택하기
     await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/media_send_button"]');

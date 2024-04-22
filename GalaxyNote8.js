@@ -1518,7 +1518,6 @@
       // 이모티콘 탭 선택
       await clickElement(driver, '//android.widget.ImageView[@resource-id="com.kakao.talk:id/emoticon_button"]');
 
-
       // 
       try {
         await clickElement(driver, '//*[@text="다운로드"]');
